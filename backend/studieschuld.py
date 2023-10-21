@@ -22,7 +22,6 @@ TODAY = datetime.date.today()
 END_DATE_ZERO_PERCENT = datetime.date(2026, 12, 31)
 END_DATE_STUDY = datetime.date(2024, 10, 31)
 END_DATE_LOAN_MSC = datetime.date(2023, 12, 31)
-INTEREST_ZERO_PERCENT = 0.0
 
 INTEREST_RATES = [
     [2024, 2.56],
@@ -94,7 +93,7 @@ def total_debt_func(init, final, interest_bool=True):
 
         if interest_bool:
             if current_year <= END_DATE_ZERO_PERCENT.year:
-                interest_rate_bsc = INTEREST_ZERO_PERCENT
+                interest_rate_bsc = INTEREST_RATES[2][1] / 100 / 12
             elif current_year < 2023:
                 interest_rate_bsc = INTEREST_RATES[2][1] / 100 / 12
             elif current_year == 2023:
