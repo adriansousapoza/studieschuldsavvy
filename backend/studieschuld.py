@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import datetime
+import plotly.graph_objects as go
 
 DEBT_BSC = 41899.78
 DEBT_MSC = 2406.86 + 11903.13
@@ -127,49 +128,78 @@ def total_debt_func(init, final, interest_bool=True):
 
     return time, total_debt, debt_bachelor, debt_prestatiebeurs, debt_master
 
+def plot_total_debt(time, total_debt, total_debt2, x_end):
+    trace1 = go.Scatter(x=time, y=total_debt, mode='lines', name='with interest')
+    trace2 = go.Scatter(x=time, y=total_debt2, mode='lines', name='without interest')
+    line = go.Scatter(x=[x_end, x_end], y=[0, max(max(total_debt), max(total_debt2))], 
+                      mode='lines', line=dict(dash='dash'), name='End Study')
+
+    data = [trace1, trace2, line]
+
+    layout = go.Layout(
+        title='Total Debt',
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Euros'),
+        showlegend=True
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+    return fig
+
+def plot_individual_debts(time, debt_bachelor, debt_prestatiebeurs, debt_master, x_end):
+    trace1 = go.Scatter(x=time, y=debt_bachelor, mode='lines', name='bachelor')
+    trace2 = go.Scatter(x=time, y=debt_prestatiebeurs, mode='lines', name='prestatiebeurs')
+    trace3 = go.Scatter(x=time, y=debt_master, mode='lines', name='master')
+    line = go.Scatter(x=[x_end, x_end], y=[0, max(max(debt_bachelor), max(debt_prestatiebeurs), max(debt_master))], 
+                      mode='lines', line=dict(dash='dash'), name='End Study')
+
+    data = [trace1, trace2, trace3, line]
+
+    layout = go.Layout(
+        title='Debts',
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Euros'),
+        showlegend=True
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+    return fig
+
+def plot_debt_difference(time, total_debt, total_debt2, x_end):
+    difference = [td - td2 for td, td2 in zip(total_debt, total_debt2)]
+
+    trace1 = go.Scatter(x=time, y=difference, mode='lines', name='difference')
+    line = go.Scatter(x=[x_end, x_end], y=[0, max(difference)], 
+                      mode='lines', line=dict(dash='dash'), name='End Study')
+
+    data = [trace1, line]
+
+    layout = go.Layout(
+        title='Difference',
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Euros'),
+        showlegend=True
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+    return fig
+
 init = TODAY.year + TODAY.month/12
 final = TODAY.year + TODAY.month/12 + 10
 time, total_debt, debt_bachelor, debt_prestatiebeurs, debt_master = total_debt_func(init, final)
 time2, total_debt2, _, _, _ = total_debt_func(init, final, interest_bool=False)
-
-fig, ax = plt.subplots()
-ax.plot(time, total_debt, label='with interest')
-ax.plot(time2, total_debt2, label='without interest')
-ax.grid()
 x_end = END_DATE_STUDY.year + END_DATE_STUDY.month/12
-ax.axvline(x=x_end, color='k', linestyle='--')
-ax.set_ylabel('Euros')
-ax.set_xlabel('Year')
-ax.legend()
-ax.set_title('Total Debt')
-plt.show()
 
 
-# plot debts
-fig, ax = plt.subplots()
-plt.plot(time, debt_bachelor, label='bachelor')
-plt.plot(time, debt_prestatiebeurs, label='prestatiebeurs')
-plt.plot(time, debt_master, label='master')
-plt.grid()
-x_end = END_DATE_STUDY.year + END_DATE_STUDY.month/12
-plt.axvline(x=x_end, color='k', linestyle='--')
-plt.ylabel('Euros')
-plt.xlabel('Year')
-plt.legend()
-plt.title('Debts')
-plt.show()
+debt_fig = plot_total_debt(time, total_debt, total_debt2, x_end)
+debt_fig.show()
+debt_individual_fig = plot_individual_debts(time, debt_bachelor, debt_prestatiebeurs, debt_master, x_end)
+debt_individual_fig.show()
+debt_difference_fig = plot_debt_difference(time, total_debt, total_debt2, x_end)
+debt_difference_fig.show()
 
-# plot difference
-fig, ax = plt.subplots()
-plt.plot(time, total_debt-total_debt2, label='difference')
-plt.grid()
-x_end = END_DATE_STUDY.year + END_DATE_STUDY.month/12
-plt.axvline(x=x_end, color='k', linestyle='--')
-plt.ylabel('Euros')
-plt.xlabel('Year')
-plt.legend()
-plt.title('Difference')
-plt.show()
+
+
 
 
 df = pd.DataFrame({'time':np.round(time,decimals=2),
