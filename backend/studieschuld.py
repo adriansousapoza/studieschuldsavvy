@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import datetime
 import plotly.graph_objects as go
+import requests
+import json
 
 DEBT_BSC = 41899.78
 DEBT_MSC = 2406.86 + 11903.13
@@ -184,6 +186,21 @@ def plot_debt_difference(time, total_debt, total_debt2, x_end):
     fig = go.Figure(data=data, layout=layout)
     return fig
 
+def plot_inflation_rates(periods, inflation_rates):
+    trace_inflation = go.Scatter(x=periods, y=inflation_rates, mode='lines', name='Inflation Rate')
+
+    data = [trace_inflation]
+
+    layout = go.Layout(
+        title='Inflation Rates Over Time',
+        xaxis=dict(title='Period'),
+        yaxis=dict(title='Inflation Rate (%)'),
+        showlegend=True
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+    return fig
+
 init = TODAY.year + TODAY.month/12
 final = TODAY.year + TODAY.month/12 + 10
 time, total_debt, debt_bachelor, debt_prestatiebeurs, debt_master = total_debt_func(init, final)
@@ -192,14 +209,12 @@ x_end = END_DATE_STUDY.year + END_DATE_STUDY.month/12
 
 
 debt_fig = plot_total_debt(time, total_debt, total_debt2, x_end)
-debt_fig.show()
 debt_individual_fig = plot_individual_debts(time, debt_bachelor, debt_prestatiebeurs, debt_master, x_end)
-debt_individual_fig.show()
 debt_difference_fig = plot_debt_difference(time, total_debt, total_debt2, x_end)
-debt_difference_fig.show()
 
-
-
+#debt_fig.show()
+#debt_individual_fig.show()
+#debt_difference_fig.show()
 
 
 df = pd.DataFrame({'time':np.round(time,decimals=2),
@@ -210,17 +225,42 @@ df = pd.DataFrame({'time':np.round(time,decimals=2),
 #df.to_csv(r'/home/asp/Downloads/debt.csv', sep=',')
 
 
+base_url = 'https://opendata.cbs.nl/ODataApi/OData/70936ned/'
+collection = 'TypedDataSet'
+data = None
+
+collection_url = f"{base_url}{collection}"
+response = requests.get(collection_url)
+
+if response.status_code == 200:
+    data = json.loads(response.text)
+    print(f"Data from {collection}:")
+    print(json.dumps(data, indent=2))
+else:
+    print(f"Failed to retrieve data from {collection}. Status code: {response.status_code}")
+
+if data is not None:
+    inflation_info = []
+    for record in data['value']:
+        period_str = record['Perioden']
+        year, month = int(period_str[:4]), int(period_str[6:8])
+        print(f"Year: {year}, Month: {month}")
+        if year >= 2006 and month != 0:
+            period_date = datetime.datetime(year, month, 1)
+            formatted_period = period_date.strftime('%m/%Y')
+
+            inflation_info.append({
+                'period': formatted_period,
+                'inflation_rate': record['JaarmutatieCPI_1']
+            })
+
+    periods = [info['period'] for info in inflation_info]
+    inflation_rates = [info['inflation_rate'] for info in inflation_info]
+
+    
+else:
+    print("Data retrieval failed. 'data' is not set.")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+inflation_plot = plot_inflation_rates(periods, inflation_rates)
+inflation_plot.show()
