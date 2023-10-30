@@ -1,22 +1,23 @@
-<!-- input_form.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Enter Your Constants</title>
+    <!-- Include Bootstrap CSS and JS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
-<body>
-
-<h1>Enter Your Constants</h1>
-
-<!-- Change the action here to "/display" -->
-<form method="post" action="/display">
-    <label for="debt_bsc">Debt BSC:</label><br>
-    <input type="text" id="debt_bsc" name="debt_bsc"><br>
-    <!-- Repeat for other fields -->
-
-    <input type="submit" value="Submit">
-</form>
-
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="mb-3">Enter Your Constants</h2>
+        <form method="post" action="/display">
+            <div class="form-group">
+                <label for="debt_bsc">Debt BSC:</label>
+                <input type="text" class="form-control" id="debt_bsc" name="debt_bsc" placeholder="Enter Debt BSC">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 </body>
 </html>

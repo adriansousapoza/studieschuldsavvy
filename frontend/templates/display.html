@@ -1,14 +1,17 @@
-<!-- display.html located in the templates folder -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Debt BSC Value</title>
+    <!-- Include Bootstrap CSS and JS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
-<body>
-
-<h1>Debt BSC Value</h1>
-<p>The DEBT_BSC value you entered is: {{ debt_bsc }}</p> <!-- This line displays the value sent from the form -->
-
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2>Debt BSC Value</h2>
+        <p>The DEBT_BSC value you entered is: <strong>{{ debt_bsc }}</strong></p>
+    </div>
 </body>
 </html>

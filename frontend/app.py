@@ -17,8 +17,7 @@ def form():
 def display():
     debt_bsc = request.form['debt_bsc']
 
-    return render_template('display.html', debt_bsc=debt_bsc) 
-
+    return render_template('display.html', debt_bsc=debt_bsc)
 
 if __name__ == '__main__':
     app.run(debug=True)
