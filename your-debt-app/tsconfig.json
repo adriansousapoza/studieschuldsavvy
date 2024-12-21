@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -17,6 +18,10 @@
       {
         "name": "next"
       }
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
     ],
     "paths": {
       "@/*": ["./*"]
